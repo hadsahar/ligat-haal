@@ -43,24 +43,25 @@ const CONFIG = {
      הטופס מגריל סדר אקראי לכל משתתף כדי לא להטות את הניחושים.
      ה-color משמש רק לגרפים; שנה בחופשיות.
      ⚠️ ה-id חייב להישאר ייחודי ויציב — זה מה שנשמר בבסיס הנתונים.
-        אל תשנה id אחרי שכבר הוגשו ניחושים. */
+        אל תשנה id אחרי שכבר הוגשו ניחושים.
+
      ✅ = הצבע אומת במקור כתוב · ❓ = לא הצלחתי לאמת, שווה שתעבור עליו.
      כשיש כמה קבוצות באותו צבע (חמש אדומות!) משתמשים באותו גוון
      בבהירויות שונות, כדי שהגרפים יישארו קריאים. */
   TEAMS: [
-    { id: 'beitar',   name: 'בית״ר ירושלים',      color: '#f5c518' }, // ✅ צהוב-שחור
-    { id: 'mta',      name: 'מכבי תל אביב',       color: '#ffe81f' }, // ✅ צהוב-כחול
-    { id: 'hbs',      name: 'הפועל באר שבע',      color: '#e2231a' }, // ✅ אדום
-    { id: 'hta',      name: 'הפועל תל אביב',      color: '#a4161a' }, // ✅ אדום
-    { id: 'mhaifa',   name: 'מכבי חיפה',          color: '#009b4d' }, // ✅ ירוק
-    { id: 'mnetanya', name: 'מכבי נתניה',         color: '#d9a400' }, // ✅ צהוב
-    { id: 'hhaifa',   name: 'הפועל חיפה',         color: '#ef5350' }, // ✅ אדום-שחור
-    { id: 'ks',       name: 'עירוני קריית שמונה', color: '#2563c7' }, // ✅ כחול (תוקן מבורדו)
-    { id: 'hpt',      name: 'הפועל פתח תקווה',    color: '#0e3b75' }, // ✅ "כחול שחור ולבן"
-    { id: 'mpt',      name: 'מכבי פתח תקווה',     color: '#62b6e8' }, // ✅ תכלת
-    { id: 'sakhnin',  name: 'בני סכנין',          color: '#c1272d' }, // ❓ לא ירוק — מה כן?
-    { id: 'hrg',      name: 'הפועל רמת גן',       color: '#cf2027' }, // ✅ אדום עם שחור
-    { id: 'hjer',     name: 'הפועל ירושלים',      color: '#7b1b22' }, // ✅ "אדום ושחור"
+    { id: 'beitar',   name: 'בית״ר ירושלים',      color: '#eaff2c' }, // ✅ צהוב-שחור
+    { id: 'mta',      name: 'מכבי תל אביב',       color: '#eaff2c' }, // ✅ צהוב-כחול
+    { id: 'hbs',      name: 'הפועל באר שבע',      color: '#ff0008' }, // ✅ אדום
+    { id: 'hta',      name: 'הפועל תל אביב',      color: '#ff0008' }, // ✅ אדום
+    { id: 'mhaifa',   name: 'מכבי חיפה',          color: '#139b50' }, // ✅ ירוק
+    { id: 'mnetanya', name: 'מכבי נתניה',         color: '#eaff2c' }, // ✅ צהוב
+    { id: 'hhaifa',   name: 'הפועל חיפה',         color: '#c20300' }, // ✅ אדום-שחור
+    { id: 'ks',       name: 'עירוני קריית שמונה', color: '#110fa3' }, // ✅ כחול (תוקן מבורדו)
+    { id: 'hpt',      name: 'הפועל פתח תקווה',    color: '#110fa3' }, // ✅ "כחול שחור ולבן"
+    { id: 'mpt',      name: 'מכבי פתח תקווה',     color: '#110fa3' }, // ✅ תכלת
+    { id: 'sakhnin',  name: 'בני סכנין',          color: '#c20006' }, // ❓ לא ירוק — מה כן?
+    { id: 'hrg',      name: 'הפועל רמת גן',       color: '#dd0007' }, // ✅ אדום עם שחור
+    { id: 'hjer',     name: 'הפועל ירושלים',      color: '#c20300' }, // ✅ "אדום ושחור"
     { id: 'tveria',   name: 'עירוני טבריה',       color: '#3b8fd9' }, // ✅ כחול-לבן
   ],
   /* ---------- 6. קבוצות הליגה הלאומית ----------
@@ -77,21 +78,21 @@ const CONFIG = {
      כל עוד הרשימה ריקה — בבחירת הגביע יופיעו רק 14 קבוצות ליגת העל. */
   LEUMIT_TEAMS: [
     { id: 'l-bneiyehuda', name: 'בני יהודה תל אביב',    color: '#ea580c' },
-    { id: 'l-raanana',    name: 'הפועל רעננה',          color: '#b91c1c' },
-    { id: 'l-kiryatyam',  name: 'מ.ס. קריית ים',        color: '#0ea5e9' },
-    { id: 'l-kafrqasem',  name: 'מ.ס. כפר קאסם',        color: '#15803d' },
-    { id: 'l-afula',      name: 'הפועל עפולה',          color: '#dc2626' },
-    { id: 'l-kiryatgat',  name: 'מכבי עירוני קריית גת', color: '#2563eb' },
-    { id: 'l-rishon',     name: 'הפועל ראשון לציון',    color: '#ef4444' },
-    { id: 'l-modiin',     name: 'עירוני מודיעין',       color: '#7c3aed' },
-    { id: 'l-herzliya',   name: 'מכבי הרצליה',          color: '#0891b2' },
-    { id: 'l-kfarshalem', name: 'הפועל כפר שלם',        color: '#f43f5e' },
-    { id: 'l-raina',      name: 'מכבי בני ריינה',       color: '#1d4ed8' },
+    { id: 'l-raanana',    name: 'הפועל רעננה',          color: '#eb0000' },
+    { id: 'l-kiryatyam',  name: 'מ.ס. קריית ים',        color: '#4154ff' },
+    { id: 'l-kafrqasem',  name: 'מ.ס. כפר קאסם',        color: '#108039' },
+    { id: 'l-afula',      name: 'הפועל עפולה',          color: '#2b3ee6' },
+    { id: 'l-kiryatgat',  name: 'מכבי עירוני קריית גת', color: '#cdeb25' },
+    { id: 'l-rishon',     name: 'הפועל ראשון לציון',    color: '#ffae00' },
+    { id: 'l-modiin',     name: 'עירוני מודיעין',       color: '#4a00ca' },
+    { id: 'l-herzliya',   name: 'מכבי הרצליה',          color: '#fffc2e' },
+    { id: 'l-kfarshalem', name: 'הפועל כפר שלם',        color: '#db7c00' },
+    { id: 'l-raina',      name: 'מכבי בני ריינה',       color: '#123186' },
     { id: 'l-nazareth',   name: 'מכבי אחי נצרת',        color: '#059669' },
-    { id: 'l-ashdod',     name: 'מ.ס. אשדוד',           color: '#f59e0b' },
-    { id: 'l-yafo',       name: 'מכבי קביליו יפו',      color: '#4f46e5' },
+    { id: 'l-ashdod',     name: 'מ.ס. אשדוד',           color: '#dfdc43' },
+    { id: 'l-yafo',       name: 'מכבי קביליו יפו',      color: '#f3f2fd' },
     { id: 'l-kfarsaba',   name: 'הפועל כפר סבא',        color: '#16a34a' },
-    { id: 'l-akko',       name: 'הפועל עכו',            color: '#be123c' },
+    { id: 'l-akko',       name: 'הפועל עכו',            color: '#562deb' },
   ],
 };
 
