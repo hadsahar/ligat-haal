@@ -17,8 +17,16 @@
 4. בתפריט הצד → **SQL Editor** → **New query**.
 5. העתק לשם את **כל** התוכן של [`supabase/setup.sql`](supabase/setup.sql) → **Run**.
 
-> ⚠️ לפני ההרצה, שנה בקובץ ה-SQL את תאריך הדדליין בשורת
-> `insert before deadline` לתאריך שאתה רוצה.
+> ⚠️ לפני ההרצה, ודא שתאריך הדדליין בשורת `insert before deadline`
+> זהה ל-`DEADLINE` שב-`config.js`.
+
+**אם Supabase מציג אזהרת "Potential issue detected / destructive operations":**
+היא נדלקת אוטומטית על המילה `alter`, שמופיעה ב-`alter table ... enable row level security`.
+השורה הזו **מפעילה** אבטחה ולא מוחקת כלום. `setup.sql` כולו רק יוצר —
+פונקציה, טבלה, שתי הרשאות ואינדקס. אפשר לאשר בביטחון.
+
+כל מה שבאמת משנה או מוחק נמצא בקובץ נפרד, [`supabase/snippets.sql`](supabase/snippets.sql),
+שמריצים ממנו שאילתה אחת בכל פעם לפי הצורך.
 
 ### 2. חיבור האתר לבסיס הנתונים
 
@@ -74,7 +82,7 @@ https://hadsahar.github.io/ligat-haal/
 **למחוק הגשה** (מישהו הגיש בטעות / פעמיים):
 מסמנים את השורה ב-Table Editor ומוחקים. הסטטיסטיקות יתעדכנו מיד.
 
-**לשנות את הדדליין אחרי שכבר העלית** — צריך לשנות בשני מקומות:
+**לשנות את הדדליין אחרי שכבר העלית** — צריך לשנות בשני מקומות (הבלוק המוכן ב-`snippets.sql`):
 `config.js` (התצוגה) **וגם** ה-policy ב-Supabase (האכיפה האמיתית):
 
 ```sql
@@ -110,7 +118,8 @@ assets/js/store.js      קריאה/כתיבה ל-Supabase (fetch גולמי, ב�
 assets/js/app.js        לוגיקת הגרירה, הוולידציה והשליחה
 assets/js/stats.js      חישוב הסטטיסטיקות והרינדור
 assets/css/style.css    עיצוב (RTL, מובייל־first)
-supabase/setup.sql      סכמת ה-DB + הרשאות
+supabase/setup.sql      סכמת ה-DB + הרשאות (הרצה ראשונה)
+supabase/snippets.sql   שאילתות תחזוקה: שינוי דדליין, מחיקת הגשה, דוחות
 .nojekyll               אומר ל-GitHub Pages להגיש את הקבצים כמו שהם
 ```
 

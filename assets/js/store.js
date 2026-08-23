@@ -14,21 +14,33 @@ const Store = (() => {
     ...extra,
   });
 
+  /* ממפה שגיאת שרת להודעה בעברית.
+     סדר הבדיקות חשוב: קודם לפי תוכן/קוד השגיאה, ורק אחר כך לפי סטטוס.
+     הדדליין נאכף כ-RLS policy ולכן חוזר כ-403 — בלי הבדיקה הזו הוא היה
+     מוצג בטעות כ"בעיית מפתחות". */
   async function readError(res) {
-    let detail = '';
+    let detail = '', code = '';
     try {
       const body = await res.json();
       detail = body.message || body.hint || body.details || '';
+      code   = body.code || '';
     } catch { /* גוף לא-JSON — מתעלמים */ }
 
-    if (res.status === 401 || res.status === 403) {
-      return 'אין הרשאה לכתוב/לקרוא. ודא שהרצת את supabase/setup.sql ושהמפתחות ב-config.js נכונים.';
+    // ה-policy היחידה שחוסמת הוספה היא זו של הדדליין
+    if (code === '42501' || /row-level security/i.test(detail)) {
+      return 'ההגשות נסגרו — הדדליין עבר, ולא ניתן להגיש יותר.';
     }
-    if (res.status === 404) {
+    if (code === '23514' || /check constraint/i.test(detail)) {
+      return 'הניחוש נדחה כלא תקין (צריך בדיוק 14 קבוצות שונות ושם באורך 2–24 תווים).';
+    }
+    if (code === '42P01' || res.status === 404) {
       return 'הטבלה predictions לא נמצאה. הרץ את supabase/setup.sql ב-SQL Editor של Supabase.';
     }
-    if (/deadline|check constraint|violates/i.test(detail)) {
-      return 'ההגשה נדחתה על ידי השרת — כנראה שהדדליין עבר.';
+    if (res.status === 401 || res.status === 403) {
+      return 'אין הרשאה. ודא שהמפתחות ב-config.js נכונים ושהרצת את supabase/setup.sql.';
+    }
+    if (!res.status) {
+      return 'אין חיבור לאינטרנט, או שהשרת לא זמין. נסה שוב.';
     }
     return detail || `שגיאת שרת (${res.status}).`;
   }
