@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ניחושי ליגת העל</title>
+<meta name="description" content="נחשו איפה כל קבוצה תסיים את העונה בליגת העל">
+<meta name="theme-color" content="#0b1020">
+
+<meta property="og:title" content="ניחושי ליגת העל">
+<meta property="og:description" content="סדרו את 14 הקבוצות לפי המקום שבו הן יסיימו את העונה">
+<meta property="og:type" content="website">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="ball">⚽</div>
+      <div>
+        <h1 id="title">ניחושי ליגת העל</h1>
+        <div class="season" id="season">עונת 2026/27</div>
+      </div>
+    </div>
+    <a class="navlink" href="stats.html">📊 תוצאות</a>
+  </header>
+
+  <div class="deadline" id="deadline" hidden></div>
+
+  <!-- הודעות מערכת (שגיאת הגדרה / דדליין) -->
+  <div id="sysnote"></div>
+
+  <!-- ===== מצב א׳: הטופס ===== -->
+  <main id="form-view" hidden>
+
+    <section class="card">
+      <h2>מי אתה?</h2>
+      <p class="hint">השם יוצג לצד הניחוש שלך בעמוד התוצאות.</p>
+      <label class="field">
+        <span>שם</span>
+        <input type="text" id="name" maxlength="24" placeholder="לדוגמה: סהר" autocomplete="name" spellcheck="false">
+      </label>
+    </section>
+
+    <section class="card">
+      <h2 id="order-title">סדר הטבלה בסוף העונה</h2>
+      <p class="hint" id="order-hint">גררו את הידית <b>⠿</b> כדי להזיז קבוצה, או השתמשו בחצים. הקבוצה העליונה היא האלופה, שתי התחתונות יורדות ליגה.</p>
+
+      <ul class="list" id="list"></ul>
+
+      <div class="legend">
+        <span><i style="background:var(--gold)"></i>אלופה</span>
+        <span><i style="background:var(--europe)"></i>אירופה</span>
+        <span><i style="background:var(--top)"></i>פלייאוף עליון</span>
+        <span><i style="background:var(--relegation)"></i>ירידה</span>
+      </div>
+
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn sm ghost" id="shuffle" type="button">🎲 ערבב</button>
+        <button class="btn sm ghost" id="reset" type="button">↺ אפס</button>
+      </div>
+    </section>
+
+    <div id="submit-note"></div>
+
+    <button class="btn primary" id="submit" type="button">שלח את הניחוש שלי 🔒</button>
+    <p class="hint" style="text-align:center;margin-top:11px">אחרי השליחה לא ניתן לשנות — אז תחשבו טוב.</p>
+  </main>
+
+  <!-- ===== מצב ב׳: כבר הגשת ===== -->
+  <main id="done-view" hidden>
+    <section class="card">
+      <div class="done-hero">
+        <div class="big">✅</div>
+        <h2 id="done-name">הניחוש שלך נשלח!</h2>
+        <p>תודה. עכשיו אפשר לראות מה כולם ניחשו — ולריב על זה.</p>
+        <a class="btn primary" href="stats.html" style="text-decoration:none">📊 לעמוד התוצאות</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>הניחוש שלך</h2>
+      <div class="mini-table" id="done-table"></div>
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn sm ghost" id="unlock" type="button">זה לא אני — נקה את המכשיר</button>
+      </div>
+    </section>
+  </main>
+
+  <p class="foot">נבנה לכיף · הניחושים סופיים · בהצלחה 🍀</p>
+</div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

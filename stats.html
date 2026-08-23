@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>תוצאות · ניחושי ליגת העל</title>
+<meta name="theme-color" content="#0b1020">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="ball">📊</div>
+      <div>
+        <h1>התוצאות</h1>
+        <div class="season" id="season">עונת 2026/27</div>
+      </div>
+    </div>
+    <a class="navlink" href="index.html">⚽ לניחוש</a>
+  </header>
+
+  <div id="sysnote"></div>
+  <div class="spinner" id="spinner"></div>
+
+  <main id="content" hidden>
+
+    <div class="stat-grid" id="kpis"></div>
+
+    <section class="card">
+      <h2>🏆 מי תהיה האלופה?</h2>
+      <p class="hint">כמה אנשים שמו כל קבוצה במקום הראשון.</p>
+      <div class="vote-list" id="champs"></div>
+    </section>
+
+    <section class="card">
+      <h2>📋 הטבלה המשוקללת</h2>
+      <p class="hint">ממוצע המיקומים של כל קבוצה לפי כל המשתתפים — זו התחזית הקבוצתית. <b>לחצו על קבוצה</b> כדי לראות איך פיזרו אותה.</p>
+      <div class="table-head">
+        <div>#</div><div>קבוצה</div><div>ממוצע</div><div>טווח</div>
+      </div>
+      <div class="table" id="consensus"></div>
+    </section>
+
+    <section class="card">
+      <h2>🌡️ מפת חום</h2>
+      <p class="hint">כל שורה היא קבוצה, כל עמודה היא מיקום. ככל שהתא בהיר יותר — כך יותר אנשים שמו את הקבוצה שם. אלכסון נקי = הסכמה מלאה.</p>
+      <div class="heat-scroll"><div class="heat" id="heat"></div></div>
+      <div class="heat-note" id="heat-note"></div>
+    </section>
+
+    <section class="card">
+      <h2>⬇️ מי יורדת ליגה?</h2>
+      <p class="hint">כמה אנשים שמו כל קבוצה באחד משני המקומות האחרונים.</p>
+      <div class="vote-list" id="releg"></div>
+    </section>
+
+    <section class="card">
+      <h2>🔥 הכי שנויות במחלוקת</h2>
+      <p class="hint">הקבוצות שעליהן הכי פחות הסכמתם — פיזור גדול של מיקומים.</p>
+      <div class="vote-list" id="controversy"></div>
+    </section>
+
+    <section class="card">
+      <h2>👥 הניחושים המלאים</h2>
+      <p class="hint" id="people-hint"></p>
+      <div id="people"></div>
+    </section>
+
+  </main>
+
+  <p class="foot">מתעדכן אוטומטית · <a href="index.html">חזרה לניחוש</a></p>
+</div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/stats.js"></script>
+</body>
+</html>
