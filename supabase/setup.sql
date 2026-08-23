@@ -41,7 +41,7 @@ create policy "insert before deadline"
   on public.predictions
   for insert
   to anon
-  with check ( now() < timestamptz '2026-09-05 23:59:00+03' );
+  with check ( now() < timestamptz '2026-08-31 23:59:00+03' );
 
 -- אף אחד לא יכול לערוך או למחוק (אין policy ל-update/delete = חסום).
 -- אתה כמובן יכול לעשות הכל דרך ה-Table Editor של Supabase.

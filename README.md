@@ -46,6 +46,9 @@
 
 ### 4. העלאה ל-GitHub Pages
 
+ב-[github.com/new](https://github.com/new): שם `ligat-haal`, **Public**,
+בלי לסמן שום קובץ התחלתי (README/gitignore) — כבר יש כאלה כאן. ואז:
+
 ```bash
 git remote add origin https://github.com/hadsahar/ligat-haal.git
 git push -u origin main
@@ -60,7 +63,7 @@ Branch = `main`, folder = `/ (root)` → **Save**.
 https://hadsahar.github.io/ligat-haal/
 ```
 
-זה הלינק לשלוח לחברים.
+זה הלינק לשלוח לחברים. כל `git push` יעדכן את האתר אוטומטית.
 
 ---
 
@@ -132,13 +135,29 @@ npx --yes serve .
 
 ---
 
-## ריפו פרטי? (ותשובה קצרה: לא צריך)
+## נראוּת ופרטיות
 
-- Pages מריפו **פרטי** דורש **GitHub Pro** בתשלום. בחשבון Free — רק ריפו ציבורי.
-- וגם עם Pro, **האתר עצמו נשאר ציבורי**. ריפו פרטי מסתיר רק את קוד המקור.
-  אתר Pages עם הגבלת גישה אמיתית קיים רק ב-Enterprise Cloud עם ארגון.
-- בפרויקט הזה זה ממילא לא מוסיף הגנה: מפתח ה-`anon` נשלח לדפדפן של כל מבקר,
-  והניחושים יושבים ב-Supabase ולא בריפו. **ההגנה האמיתית היא ה-RLS.**
+האתר מוגדר עם `<meta name="robots" content="noindex">` בשני העמודים ו-`robots.txt`,
+כדי שלא יופיע בגוגל. הלינק עצמו עובד רגיל. אם בא לך שכן יאנדקסו — מוחקים את שניהם.
 
-מה שכן עשינו: `<meta name="robots" content="noindex">` בשני העמודים + `robots.txt`,
-כדי שהאתר לא יופיע בגוגל. הלינק עצמו עובד רגיל. אם בא לך שכן יאנדקסו — מוחקים את שניהם.
+שים לב מה ריפו ציבורי כן ולא חושף:
+
+- קוד המקור גלוי — אבל הוא ממילא נשלח לדפדפן של כל מבקר.
+- מפתח ה-`anon` גלוי — **וזה בסדר**, הוא נועד לכך. **ההגנה האמיתית היא ה-RLS.**
+- **הניחושים עצמם לא נמצאים בריפו** אלא ב-Supabase, ואליהם אין גישה דרך גיטהאב.
+
+### אם תרצה בכל זאת ריפו פרטי
+
+GitHub Pages לא מפרסם מריפו פרטי בלי **GitHub Pro** בתשלום, אבל
+**Cloudflare Pages** עושה את זה **בחינם**:
+
+1. הפוך את הריפו ל-Private ב-**Settings** → *Danger Zone* → *Change visibility*.
+2. ב-[dash.cloudflare.com](https://dash.cloudflare.com): **Workers & Pages** → **Create**
+   → לשונית **Pages** → **Connect to Git**, ואשר גישה לריפו.
+3. הגדרות build: *Framework preset* = **None**, *Build command* = **ריק**,
+   *Build output directory* = `/`.
+
+הכתובת תהיה `https://ligat-haal.pages.dev`. שום שינוי בקוד לא נדרש.
+
+גם אז — **האתר עצמו נשאר ציבורי**; ריפו פרטי מסתיר רק את קוד המקור.
+אתר עם הגבלת גישה אמיתית קיים רק ב-GitHub Enterprise Cloud.

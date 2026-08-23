@@ -247,11 +247,14 @@
     const m = Math.floor((s % 3600) / 60);
     const sec = s % 60;
 
-    const days  = d === 1 ? 'יום <b>אחד</b>' : `<b>${d}</b> ימים`;
+    const days  = d === 1 ? 'יום <b>אחד</b>'
+                : d === 2 ? '<b>יומיים</b>'
+                : `<b>${d}</b> ימים`;
     const hours = h === 1 ? 'שעה <b>אחת</b>' : `<b>${h}</b> שעות`;
 
+    // מעל יום — ימים (ושעות, אם יש). מתחת ליום — שעון יורד.
     const left = d > 0
-      ? `${days} ו-${hours}`
+      ? (h > 0 ? `${days} ו-${hours}` : days)
       : `<b>${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}</b>`;
 
     el.deadline.className = 'deadline';
