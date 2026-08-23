@@ -121,6 +121,23 @@
     return calls.slice(0, limit);
   }
 
+  /** מספר מקומות האירופה מהליגה (ללא הגביע) — נגזר מ-ZONES. */
+  const EU_LEAGUE_SPOTS = (CONFIG.ZONES.find(z => z.key === 'europe') || { to: 3 }).to;
+
+  /** מי מעפילה לאירופה לפי ניחוש בודד.
+      כלל: המקומות הראשונים בליגה + זוכת הגביע.
+      אם זוכת הגביע כבר נמצאת בפנים, הכרטיס שלה מחליק למקום הבא —
+      כלומר תמיד יוצאות בדיוק EU_LEAGUE_SPOTS + 1 קבוצות. */
+  function europeanQualifiers(entry) {
+    const top = entry.team_order.slice(0, EU_LEAGUE_SPOTS);
+    const cup = entry.cup_winner;
+    if (!cup) return { teams: top, cascaded: false };          // הגשה מלפני שדה הגביע
+    if (top.includes(cup)) {
+      return { teams: entry.team_order.slice(0, EU_LEAGUE_SPOTS + 1), cascaded: true };
+    }
+    return { teams: [...top, cup], cascaded: false };
+  }
+
   /** כמה אנשים דירגו את idA מעל idB. */
   function headToHead(entries, idA, idB) {
     let a = 0, b = 0;
@@ -472,23 +489,34 @@
         (leumitPicks ? ` <b>${leumitPicks}</b> הימרו על קבוצה מהליגה הלאומית 😮` : '');
     }
 
-    // מירוץ לאירופה — מקומות 1 עד סוף אזור "אירופה"
-    const euZone = CONFIG.ZONES.find(z => z.key === 'europe');
-    const euTop  = euZone ? euZone.to : 3;
+    // מירוץ לאירופה — לפי הכלל האמיתי, כולל החלקת הכרטיס של הגביע
+    const euVotes = new Map();
+    let cascaded = 0;
+    for (const e of entries) {
+      const q = europeanQualifiers(e);
+      if (q.cascaded) cascaded++;
+      for (const id of q.teams) euVotes.set(id, (euVotes.get(id) || 0) + 1);
+    }
+
     voteBars($('europe'),
-      stats.map(s => ({
-              team: s.team,
-              value: s.counts.slice(0, euTop).reduce((a, b) => a + b, 0),
-            }))
-            .filter(x => x.value > 0)
-            .sort((a, b) => b.value - a.value)
-            .map(x => ({
-              label: x.team.name, value: x.value, color: x.team.color,
-              text: `${x.value} (${Math.round(x.value / entries.length * 100)}%)`,
-            })),
+      [...euVotes.entries()]
+        .map(([id, v]) => ({ team: CONFIG.CUP_TEAM_BY_ID[id], value: v }))
+        .filter(x => x.team)
+        .sort((a, b) => b.value - a.value)
+        .map(x => ({
+          label: x.team.name, value: x.value, color: x.team.color,
+          text: `${x.value} (${Math.round(x.value / entries.length * 100)}%)`,
+        })),
       entries.length, 'var(--europe)');
-    $('europe-hint').textContent =
-      `כמה אנשים שמו כל קבוצה באחד מ-${euTop} המקומות הראשונים.`;
+
+    $('europe-hint').innerHTML =
+      `${EU_LEAGUE_SPOTS} המקומות הראשונים בליגה, ועוד זוכת הגביע — ` +
+      `${EU_LEAGUE_SPOTS + 1} קבוצות בכל ניחוש. ` +
+      (cascaded
+        ? `אצל <b>${cascaded}</b> מכם זוכת הגביע כבר בשלישייה, ולכן הכרטיס שלה ` +
+          `מחליק למקום <b>${EU_LEAGUE_SPOTS + 1}</b>.`
+        : `אצל אף אחד זוכת הגביע לא נמצאת בשלישייה, אז אף אחד לא נכנס דרך מקום ` +
+          `${EU_LEAGUE_SPOTS + 1}.`);
 
     renderConsensus(stats);
     renderHeat(stats, entries.length);
