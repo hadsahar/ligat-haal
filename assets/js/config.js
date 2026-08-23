@@ -34,7 +34,7 @@ const CONFIG = {
     { from: 2,  to: 3,  key: 'europe',     label: 'אירופה'         },
     { from: 4,  to: 6,  key: 'top',        label: 'פלייאוף עליון'  },
     { from: 7,  to: 12, key: 'mid',        label: 'פלייאוף תחתון'  },
-    { from: 13, to: 14, key: 'relegation', label: 'ירידה לליגה א׳' },
+    { from: 13, to: 14, key: 'relegation', label: 'ירידה לליגה הלאומית' },
   ],
 
   /* ---------- 5. הקבוצות ----------
