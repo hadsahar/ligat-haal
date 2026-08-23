@@ -1,3 +1,7 @@
 .DS_Store
 Thumbs.db
 .claude/
+
+# הערות והוראות אישיות — לא נדחפות לגיטהאב
+*.local.md
+*.local.sql
