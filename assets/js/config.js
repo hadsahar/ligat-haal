@@ -60,6 +60,36 @@ const CONFIG = {
     { id: 'hjer',     name: 'הפועל ירושלים',      color: '#7f1d1d' },
     { id: 'tveria',   name: 'עירוני טבריה',       color: '#0891b2' },
   ],
+  /* ---------- 6. קבוצות הליגה הלאומית ----------
+     רלוונטי רק לניחוש זוכת גביע המדינה — הן משתתפות בגביע
+     ויכולות לזכות בו, אבל הן לא חלק מטבלת ליגת העל.
+
+     ⬅️ סהר: הדבק כאן את הרשימה. צריך רק id ו-name;
+        אם לא תיתן color, ייבחר אפור ניטרלי אוטומטית.
+        ה-id חייב להיות ייחודי ולא להתנגש עם ה-id-ים למעלה.
+
+     דוגמה לפורמט:
+       { id: 'leumit-example', name: 'שם הקבוצה' },
+
+     כל עוד הרשימה ריקה — בבחירת הגביע יופיעו רק 14 קבוצות ליגת העל. */
+  LEUMIT_TEAMS: [
+    { id: 'l-bneiyehuda', name: 'בני יהודה תל אביב',    color: '#ea580c' },
+    { id: 'l-raanana',    name: 'הפועל רעננה',          color: '#b91c1c' },
+    { id: 'l-kiryatyam',  name: 'מ.ס. קריית ים',        color: '#0ea5e9' },
+    { id: 'l-kafrqasem',  name: 'מ.ס. כפר קאסם',        color: '#15803d' },
+    { id: 'l-afula',      name: 'הפועל עפולה',          color: '#dc2626' },
+    { id: 'l-kiryatgat',  name: 'מכבי עירוני קריית גת', color: '#2563eb' },
+    { id: 'l-rishon',     name: 'הפועל ראשון לציון',    color: '#ef4444' },
+    { id: 'l-modiin',     name: 'עירוני מודיעין',       color: '#7c3aed' },
+    { id: 'l-herzliya',   name: 'מכבי הרצליה',          color: '#0891b2' },
+    { id: 'l-kfarshalem', name: 'הפועל כפר שלם',        color: '#f43f5e' },
+    { id: 'l-raina',      name: 'מכבי בני ריינה',       color: '#1d4ed8' },
+    { id: 'l-nazareth',   name: 'מכבי אחי נצרת',        color: '#059669' },
+    { id: 'l-ashdod',     name: 'מ.ס. אשדוד',           color: '#f59e0b' },
+    { id: 'l-yafo',       name: 'מכבי קביליו יפו',      color: '#4f46e5' },
+    { id: 'l-kfarsaba',   name: 'הפועל כפר סבא',        color: '#16a34a' },
+    { id: 'l-akko',       name: 'הפועל עכו',            color: '#be123c' },
+  ],
 };
 
 /* ------------------------------------------------------------
@@ -68,6 +98,14 @@ const CONFIG = {
 
 CONFIG.TEAM_BY_ID = Object.fromEntries(CONFIG.TEAMS.map(t => [t.id, t]));
 CONFIG.TEAM_COUNT = CONFIG.TEAMS.length;
+
+/* צבע ברירת מחדל לקבוצות הליגה הלאומית שלא הוגדר להן צבע */
+CONFIG.LEUMIT_TEAMS = (CONFIG.LEUMIT_TEAMS || []).map(t => ({ color: '#7c8aa8', ...t }));
+
+/* מי יכולה לזכות בגביע — ליגת העל + הליגה הלאומית */
+CONFIG.CUP_TEAMS = [...CONFIG.TEAMS, ...CONFIG.LEUMIT_TEAMS];
+CONFIG.CUP_TEAM_BY_ID = Object.fromEntries(CONFIG.CUP_TEAMS.map(t => [t.id, t]));
+CONFIG.hasLeumit = () => CONFIG.LEUMIT_TEAMS.length > 0;
 
 CONFIG.zoneFor = pos => CONFIG.ZONES.find(z => pos >= z.from && pos <= z.to) || null;
 

@@ -23,6 +23,7 @@
   /** order[i] = מזהה הקבוצה שנמצאת במקום ה-i+1 */
   let order = [];
   let rows  = [];   // אלמנטי ה-<li> לפי סדר ה-DOM (תואם ל-order)
+  let cup   = null; // מזהה הקבוצה שנבחרה לזכות בגביע
 
   /* ============ עזרים ============ */
 
@@ -95,6 +96,34 @@
       tag.textContent = zone ? zone.label : '';
     });
   }
+
+  /* ============ בחירת זוכת הגביע ============ */
+
+  function renderCup() {
+    const box = $('cup');
+    const group = (title, teams) => teams.length ? `
+      <div class="chips-group">
+        <div class="chips-title">${title}</div>
+        <div class="chips">${teams.map(t => `
+          <button type="button" data-cup="${t.id}" aria-pressed="${cup === t.id}">
+            <i style="background:${t.color}"></i>${t.name}
+          </button>`).join('')}</div>
+      </div>` : '';
+
+    box.innerHTML = CONFIG.hasLeumit()
+      ? group('ליגת העל', CONFIG.TEAMS) + group('הליגה הלאומית', CONFIG.LEUMIT_TEAMS)
+      : `<div class="chips">${CONFIG.TEAMS.map(t => `
+          <button type="button" data-cup="${t.id}" aria-pressed="${cup === t.id}">
+            <i style="background:${t.color}"></i>${t.name}
+          </button>`).join('')}</div>`;
+  }
+
+  $('cup').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-cup]');
+    if (!btn) return;
+    cup = (cup === btn.dataset.cup) ? null : btn.dataset.cup;   // לחיצה חוזרת מבטלת
+    renderCup();
+  });
 
   /* ============ חצים ============ */
 
@@ -273,6 +302,11 @@
       el.name.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
+    if (!cup) {
+      note(el.submitNote, 'err', 'צריך לבחור גם מי תזכה בגביע המדינה.');
+      $('cup').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     if (CONFIG.isPastDeadline()) {
       note(el.submitNote, 'err', 'הדדליין עבר — לא ניתן להגיש יותר.');
       return;
@@ -282,9 +316,9 @@
     el.submit.textContent = 'שולח…';
 
     try {
-      await Store.submit(name, order);
-      localStorage.setItem(LOCK_KEY, JSON.stringify({ name, order, at: Date.now() }));
-      showDone({ name, order });
+      await Store.submit(name, order, cup);
+      localStorage.setItem(LOCK_KEY, JSON.stringify({ name, order, cup, at: Date.now() }));
+      showDone({ name, order, cup });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       note(el.submitNote, 'err', `<strong>ההגשה נכשלה</strong>${err.message}`);
@@ -299,6 +333,13 @@
     el.formView.hidden = true;
     el.doneView.hidden = false;
     el.doneName.textContent = `הניחוש של ${lock.name} נשלח!`;
+
+    const cupTeam = lock.cup ? CONFIG.CUP_TEAM_BY_ID[lock.cup] : null;
+    $('done-cup').innerHTML = cupTeam
+      ? `<div class="mini-row"><div class="pos" data-zone="champion">🏆</div>
+           <div class="chip" style="background:${cupTeam.color}"></div>
+           <div class="tname">${cupTeam.name}</div></div>`
+      : '';
 
     el.doneTable.innerHTML = lock.order.map((id, i) => {
       const team = CONFIG.TEAM_BY_ID[id];
@@ -340,6 +381,7 @@
     el.formView.hidden = false;
     order = shuffled(CONFIG.TEAMS.map(t => t.id));   // סדר אקראי כדי לא להטות
     render();
+    renderCup();
     paintDeadline();
     setInterval(paintDeadline, 1000);
 

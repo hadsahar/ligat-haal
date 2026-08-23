@@ -540,3 +540,162 @@ input[type="text"]::placeholder { color: #5f6b93; }
   .card { padding: 14px; }
   .table-head, .trow { grid-template-columns: 30px 1fr 52px 46px; gap: 7px; }
 }
+
+/* ===== זוגות דומים ===== */
+.pair {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+}
+.pair-medal { font-size: 16px; text-align: center; color: var(--muted); }
+.pair-names { font-size: 14px; font-weight: 600; min-width: 0; }
+.pair-names span { color: var(--muted); font-weight: 400; margin: 0 2px; }
+.pair-pct {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== קריאות אמיצות ===== */
+.bold-call {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+}
+.bold-arrow { font-size: 12px; text-align: center; }
+.bold-arrow.up   { color: var(--accent); }
+.bold-arrow.down { color: var(--relegation); }
+.bold-text { font-size: 13.5px; line-height: 1.55; min-width: 0; }
+.bold-text span { color: var(--muted); font-size: 12px; }
+.bold-gap {
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.bold-gap.up   { color: var(--accent); }
+.bold-gap.down { color: var(--relegation); }
+
+/* ===== ראש בראש ===== */
+.h2h-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.h2h-picker select {
+  flex: 1 1 0;
+  min-width: 0;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  padding: 10px 12px;
+  cursor: pointer;
+  outline: none;
+}
+.h2h-picker select:focus { border-color: var(--accent); }
+.h2h-picker .vs { font-size: 12px; color: var(--muted); flex: 0 0 auto; }
+
+.h2h-bar {
+  display: flex;
+  height: 26px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-2);
+}
+.h2h-bar div { transition: width .45s cubic-bezier(.2,.8,.3,1); }
+.h2h-legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.h2h-legend i {
+  width: 9px; height: 9px; border-radius: 3px;
+  display: inline-block; margin-left: 5px;
+}
+.h2h-legend b { color: var(--text); font-variant-numeric: tabular-nums; }
+.h2h-verdict {
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+.h2h-verdict b { color: var(--text); }
+
+@media (max-width: 480px) {
+  .h2h-picker { flex-wrap: wrap; }
+  .h2h-picker select { flex: 1 1 100%; }
+  .h2h-picker .vs { width: 100%; text-align: center; }
+  .pair, .bold-call { grid-template-columns: 22px 1fr auto; gap: 8px; }
+  .bold-text { font-size: 12.5px; }
+}
+
+/* ===== בחירת זוכת הגביע ===== */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.chips button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 9px 14px 9px 12px;
+  cursor: pointer;
+  transition: .14s;
+  -webkit-tap-highlight-color: transparent;
+}
+.chips button i {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex: 0 0 8px;
+}
+.chips button:hover { border-color: var(--muted); background: var(--card-2); }
+.chips button[aria-pressed="true"] {
+  border-color: var(--gold);
+  background: rgba(251,191,36,.14);
+  color: #fde68a;
+}
+.chips button[aria-pressed="true"]::after {
+  content: '🏆';
+  font-size: 11px;
+}
+
+/* קיבוץ הצ'יפים לפי ליגה */
+.chips-group + .chips-group { margin-top: 16px; }
+.chips-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 8px;
+  letter-spacing: .3px;
+}

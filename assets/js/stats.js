@@ -58,6 +58,81 @@
     return stats;
   }
 
+  /* ---- מדדים ברמת המשתתף ----
+     המרחק בין שתי טבלאות = סכום הפרשי המיקומים של כל קבוצה
+     (Spearman footrule). 0 = טבלאות זהות.
+     המרחק המרבי האפשרי ל-14 קבוצות הוא 98, וזה מה שמנרמל לאחוזים. */
+
+  const MAX_DIST = 2 * Math.floor((N * N) / 4);
+
+  const posMap = entry => new Map(entry.team_order.map((id, i) => [id, i + 1]));
+
+  const footrule = (a, b) => {
+    let d = 0;
+    for (const [id, p] of a) { const q = b.get(id); if (q) d += Math.abs(p - q); }
+    return d;
+  };
+
+  const similarity = dist => Math.round((1 - dist / MAX_DIST) * 100);
+
+  /** לכל משתתף: כמה הוא רחוק מהקונצנזוס, ומי הכי דומה לו. */
+  function analysePeople(entries, consensusRank) {
+    const people = entries.map(e => ({ entry: e, pos: posMap(e) }));
+
+    for (const p of people) {
+      p.distFromConsensus = footrule(p.pos, consensusRank);
+      p.mainstream = similarity(p.distFromConsensus);
+    }
+
+    // זוגות — n קטן, אז השוואה מלאה היא זניחה
+    const pairs = [];
+    for (let i = 0; i < people.length; i++) {
+      for (let j = i + 1; j < people.length; j++) {
+        pairs.push({ a: people[i], b: people[j], dist: footrule(people[i].pos, people[j].pos) });
+      }
+    }
+    pairs.sort((x, y) => x.dist - y.dist);
+
+    for (const p of people) {
+      const best = pairs.find(pr => pr.a === p || pr.b === p);
+      p.twin = best ? { other: best.a === p ? best.b : best.a, dist: best.dist } : null;
+    }
+
+    return { people, pairs };
+  }
+
+  /** ההימורים הבודדים שהכי חורגים מהקונצנזוס. */
+  function boldestCalls(people, consensusRank, limit = 6) {
+    const calls = [];
+    for (const p of people) {
+      for (const [id, rank] of consensusRank) {
+        const mine = p.pos.get(id);
+        if (!mine) continue;
+        calls.push({
+          name: p.entry.name,
+          team: CONFIG.TEAM_BY_ID[id],
+          mine,
+          consensus: rank,
+          dev: mine - rank,          // שלילי = אופטימי (מיקם גבוה יותר)
+        });
+      }
+    }
+    calls.sort((a, b) => Math.abs(b.dev) - Math.abs(a.dev));
+    return calls.slice(0, limit);
+  }
+
+  /** כמה אנשים דירגו את idA מעל idB. */
+  function headToHead(entries, idA, idB) {
+    let a = 0, b = 0;
+    for (const e of entries) {
+      const ia = e.team_order.indexOf(idA);
+      const ib = e.team_order.indexOf(idB);
+      if (ia < 0 || ib < 0) continue;
+      if (ia < ib) a++; else b++;
+    }
+    return { a, b, total: a + b };
+  }
+
   /* ============ רכיבי תצוגה ============ */
 
   function voteBars(container, items, total, accent) {
@@ -169,6 +244,109 @@
       `המספר בתא = כמה אנשים שמו את הקבוצה במקום הזה (מתוך ${total}).`;
   }
 
+  /* ---- מי הולך עם הזרם ---- */
+  function renderMainstream(people) {
+    const sorted = [...people].sort((a, b) => a.distFromConsensus - b.distFromConsensus);
+    const worst = sorted.at(-1).distFromConsensus || 1;
+
+    $('mainstream').innerHTML = sorted.map((p, i) => {
+      const pct = (p.distFromConsensus / worst) * 100;
+      // ירוק = זורם עם הקונצנזוס, כתום/אדום = הולך נגדו
+      const hue = Math.round(140 - (p.distFromConsensus / worst) * 140);
+      const tag = i === 0 ? ' 🐑' : (i === sorted.length - 1 ? ' 🦅' : '');
+      return `<div class="vote">
+        <div class="rank"><span style="font-size:12px;color:var(--muted)">${i + 1}</span></div>
+        <div class="bar-wrap">
+          <div class="bar-name">${esc(p.entry.name)}${tag}</div>
+          <div class="bar-bg"><div class="bar-fill"
+               style="width:${Math.max(4, pct)}%;background:hsl(${hue} 70% 55%)"></div></div>
+        </div>
+        <div class="val">${p.mainstream}% זהות</div>
+      </div>`;
+    }).join('');
+
+    $('mainstream-note').innerHTML =
+      `🐑 <b>${esc(sorted[0].entry.name)}</b> הכי קרוב לדעת הקהל · ` +
+      `🦅 <b>${esc(sorted.at(-1).entry.name)}</b> הכי הולך נגד הזרם`;
+  }
+
+  /* ---- מי חושב כמוך ---- */
+  function renderTwins(pairs) {
+    const top = pairs.slice(0, 4);
+    const opposite = pairs.at(-1);
+
+    $('twins').innerHTML = top.map((pr, i) => `
+      <div class="pair">
+        <div class="pair-medal">${['🥇','🥈','🥉','4'][i]}</div>
+        <div class="pair-names">${esc(pr.a.entry.name)} <span>↔</span> ${esc(pr.b.entry.name)}</div>
+        <div class="pair-pct">${similarity(pr.dist)}%</div>
+      </div>`).join('');
+
+    $('twins-note').innerHTML = opposite
+      ? `ובקצה השני: <b>${esc(opposite.a.entry.name)}</b> מול <b>${esc(opposite.b.entry.name)}</b> — ` +
+        `כמעט לא מסכימים על כלום — ${similarity(opposite.dist)}% זהות בלבד.`
+      : '';
+  }
+
+  /* ---- הקריאות האמיצות ---- */
+  function renderBold(calls) {
+    $('bold').innerHTML = calls.map(c => {
+      const up = c.dev < 0;
+      return `<div class="bold-call">
+        <div class="bold-arrow ${up ? 'up' : 'down'}">${up ? '▲' : '▼'}</div>
+        <div class="bold-text">
+          <b>${esc(c.name)}</b> שם את
+          <b style="color:${c.team.color}">${esc(c.team.name)}</b>
+          במקום <b>${c.mine}</b>
+          <span>· הקונצנזוס: ${c.consensus}</span>
+        </div>
+        <div class="bold-gap ${up ? 'up' : 'down'}">${up ? '+' : '−'}${Math.abs(c.dev)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ---- ראש בראש ---- */
+  function renderH2H(entries, stats) {
+    const selA = $('h2h-a'), selB = $('h2h-b');
+    const opts = stats.map(s =>
+      `<option value="${s.team.id}">${esc(s.team.name)}</option>`).join('');
+    selA.innerHTML = opts;
+    selB.innerHTML = opts;
+    selA.value = stats[0].team.id;
+    selB.value = stats[1].team.id;
+
+    const paint = () => {
+      const idA = selA.value, idB = selB.value;
+      if (idA === idB) {
+        $('h2h-result').innerHTML =
+          '<div class="empty" style="padding:18px">בחרו שתי קבוצות שונות.</div>';
+        return;
+      }
+      const tA = CONFIG.TEAM_BY_ID[idA], tB = CONFIG.TEAM_BY_ID[idB];
+      const { a, b, total } = headToHead(entries, idA, idB);
+      const pa = total ? Math.round((a / total) * 100) : 0;
+
+      $('h2h-result').innerHTML = `
+        <div class="h2h-bar">
+          <div style="width:${pa}%;background:${tA.color}"></div>
+          <div style="width:${100 - pa}%;background:${tB.color}"></div>
+        </div>
+        <div class="h2h-legend">
+          <div><i style="background:${tA.color}"></i>${esc(tA.name)} <b>${a}</b> (${pa}%)</div>
+          <div><i style="background:${tB.color}"></i>${esc(tB.name)} <b>${b}</b> (${100 - pa}%)</div>
+        </div>
+        <div class="h2h-verdict">${
+          a === b ? 'תיקו מוחלט — הקבוצה חצויה.'
+          : `<b>${esc(a > b ? tA.name : tB.name)}</b> מסיימת מעל ` +
+            `<b>${esc(a > b ? tB.name : tA.name)}</b> אצל ${Math.max(pa, 100 - pa)}% מהמנחשים.`
+        }</div>`;
+    };
+
+    selA.onchange = paint;
+    selB.onchange = paint;
+    paint();
+  }
+
   function renderPeople(entries) {
     $('people-hint').textContent =
       `${entries.length} ${entries.length === 1 ? 'ניחוש' : 'ניחושים'} — לחצו על שם כדי לפתוח את הטבלה המלאה.`;
@@ -264,6 +442,54 @@
                 })),
       entries.length);
 
+    // זוכת הגביע — כולל קבוצות מהליגה הלאומית
+    const cupVotes = new Map();
+    for (const e of entries) {
+      if (!e.cup_winner) continue;                   // הגשות מלפני שהשדה נוסף
+      cupVotes.set(e.cup_winner, (cupVotes.get(e.cup_winner) || 0) + 1);
+    }
+    const cupTotal = [...cupVotes.values()].reduce((a, b) => a + b, 0);
+
+    if (!cupTotal) {
+      $('cup-card').hidden = true;
+    } else {
+      voteBars($('cup'),
+        [...cupVotes.entries()]
+          .map(([id, v]) => ({ team: CONFIG.CUP_TEAM_BY_ID[id], value: v }))
+          .filter(x => x.team)
+          .sort((a, b) => b.value - a.value)
+          .map(x => ({
+            label: x.team.name, value: x.value, color: x.team.color,
+            text: `${x.value} (${Math.round(x.value / cupTotal * 100)}%)`,
+          })),
+        cupTotal);
+
+      const leumitPicks = [...cupVotes.entries()]
+        .filter(([id]) => id.startsWith('l-'))
+        .reduce((a, [, v]) => a + v, 0);
+      $('cup-hint').innerHTML =
+        `זוכת הגביע מקבלת מקום באירופה. ${cupTotal} מתוך ${entries.length} ניחשו.` +
+        (leumitPicks ? ` <b>${leumitPicks}</b> הימרו על קבוצה מהליגה הלאומית 😮` : '');
+    }
+
+    // מירוץ לאירופה — מקומות 1 עד סוף אזור "אירופה"
+    const euZone = CONFIG.ZONES.find(z => z.key === 'europe');
+    const euTop  = euZone ? euZone.to : 3;
+    voteBars($('europe'),
+      stats.map(s => ({
+              team: s.team,
+              value: s.counts.slice(0, euTop).reduce((a, b) => a + b, 0),
+            }))
+            .filter(x => x.value > 0)
+            .sort((a, b) => b.value - a.value)
+            .map(x => ({
+              label: x.team.name, value: x.value, color: x.team.color,
+              text: `${x.value} (${Math.round(x.value / entries.length * 100)}%)`,
+            })),
+      entries.length, 'var(--europe)');
+    $('europe-hint').textContent =
+      `כמה אנשים שמו כל קבוצה באחד מ-${euTop} המקומות הראשונים.`;
+
     renderConsensus(stats);
     renderHeat(stats, entries.length);
 
@@ -282,7 +508,39 @@
                   label: s.team.name, value: s.sd, color: s.team.color,
                   text: `${s.min}–${s.max}`,
                 })),
-      null, 'var(--europe)');
+      null, 'var(--relegation)');
+
+    // הצד השני של המטבע: הקבוצות עם הפיזור הקטן ביותר
+    const agreed = [...stats].sort((a, b) => a.sd - b.sd).slice(0, 5);
+    const maxSd  = Math.max(...agreed.map(s => s.sd), 0.01);
+    voteBars($('agreement'),
+      agreed.map(s => ({
+        label: s.team.name,
+        value: maxSd - s.sd + 0.01,        // ככל שהפיזור קטן — הפס ארוך
+        color: s.team.color,
+        text: `${s.min}–${s.max}`,
+      })),
+      null, 'var(--accent)');
+
+    /* ---- הפילוחים החברתיים — דורשים כמה משתתפים כדי להיות משמעותיים ---- */
+    const MIN_SOCIAL = 3;
+    const social = document.querySelectorAll('[data-needs-people]');
+
+    if (entries.length >= MIN_SOCIAL) {
+      const consensusRank = new Map(stats.map((s, i) => [s.team.id, i + 1]));
+      const { people, pairs } = analysePeople(entries, consensusRank);
+
+      renderMainstream(people);
+      renderTwins(pairs);
+      renderBold(boldestCalls(people, consensusRank));
+      renderH2H(entries, stats);
+    } else {
+      social.forEach(el => el.hidden = true);
+      note($('sysnote'), 'info',
+        `<strong>עוד מעט</strong>חלק מהסטטיסטיקות (מי הולך עם הזרם, מי חושב כמוך, ` +
+        `הקריאות האמיצות) נפתחות מ-${MIN_SOCIAL} משתתפים ומעלה. כרגע יש ` +
+        `${entries.length}.`);
+    }
 
     renderPeople(entries);
   }

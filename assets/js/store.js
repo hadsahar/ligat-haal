@@ -56,12 +56,18 @@ const Store = (() => {
     return detail || `שגיאת שרת (${res.status}).`;
   }
 
-  /** שולח ניחוש חדש. order = מערך של 14 מזהי קבוצות, אינדקס 0 = מקום ראשון. */
-  async function submit(name, order) {
+  /** שולח ניחוש חדש.
+      order      = מערך של 14 מזהי קבוצות, אינדקס 0 = מקום ראשון
+      cupWinner  = מזהה הקבוצה שתזכה בגביע (יכולה להיות גם מהליגה הלאומית) */
+  async function submit(name, order, cupWinner) {
     const res = await fetch(base(), {
       method: 'POST',
       headers: headers({ 'Prefer': 'return=representation' }),
-      body: JSON.stringify([{ name: name.trim(), team_order: order }]),
+      body: JSON.stringify([{
+        name: name.trim(),
+        team_order: order,
+        cup_winner: cupWinner || null,
+      }]),
     });
     if (!res.ok) throw new Error(await readError(res));
     const rows = await res.json();
@@ -70,7 +76,7 @@ const Store = (() => {
 
   /** מחזיר את כל הניחושים, מהישן לחדש. */
   async function fetchAll() {
-    const url = `${base()}?select=id,name,team_order,created_at&order=created_at.asc`;
+    const url = `${base()}?select=id,name,team_order,cup_winner,created_at&order=created_at.asc`;
     const res = await fetch(url, { headers: headers() });
     if (!res.ok) throw new Error(await readError(res));
     return await res.json();

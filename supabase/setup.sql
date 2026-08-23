@@ -30,6 +30,7 @@ create table if not exists public.predictions (
   id          uuid primary key default gen_random_uuid(),
   name        text        not null,
   team_order  jsonb       not null,
+  cup_winner  text,                      -- מזהה הקבוצה שתזכה בגביע המדינה
   created_at  timestamptz not null default now(),
 
   -- שם סביר

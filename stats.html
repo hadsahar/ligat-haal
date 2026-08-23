@@ -41,6 +41,18 @@
       <div class="vote-list" id="champs"></div>
     </section>
 
+    <section class="card" id="cup-card">
+      <h2>🏆 זוכת גביע המדינה</h2>
+      <p class="hint" id="cup-hint">זוכת הגביע מקבלת מקום באירופה — כולל קבוצות מהליגה הלאומית.</p>
+      <div class="vote-list" id="cup"></div>
+    </section>
+
+    <section class="card">
+      <h2>🌍 המירוץ לאירופה</h2>
+      <p class="hint" id="europe-hint"></p>
+      <div class="vote-list" id="europe"></div>
+    </section>
+
     <section class="card">
       <h2>📋 הטבלה המשוקללת</h2>
       <p class="hint">ממוצע המיקומים של כל קבוצה לפי כל המשתתפים — זו התחזית הקבוצתית. <b>לחצו על קבוצה</b> כדי לראות איך פיזרו אותה.</p>
@@ -67,6 +79,43 @@
       <h2>🔥 הכי שנויות במחלוקת</h2>
       <p class="hint">הקבוצות שעליהן הכי פחות הסכמתם — פיזור גדול של מיקומים.</p>
       <div class="vote-list" id="controversy"></div>
+    </section>
+
+    <section class="card">
+      <h2>🤝 עליהן כולם מסכימים</h2>
+      <p class="hint">הקבוצות עם הפיזור הקטן ביותר — כאן כמעט אין ויכוח.</p>
+      <div class="vote-list" id="agreement"></div>
+    </section>
+
+    <section class="card" data-needs-people>
+      <h2>⚔️ ראש בראש</h2>
+      <p class="hint">בחרו שתי קבוצות וראו כמה מכם חושבים שהאחת תסיים מעל השנייה.</p>
+      <div class="h2h-picker">
+        <select id="h2h-a" aria-label="קבוצה ראשונה"></select>
+        <span class="vs">מול</span>
+        <select id="h2h-b" aria-label="קבוצה שנייה"></select>
+      </div>
+      <div id="h2h-result"></div>
+    </section>
+
+    <section class="card" data-needs-people>
+      <h2>💪 הקריאות הכי אמיצות</h2>
+      <p class="hint">ההימורים הבודדים שהכי רחוקים מדעת הרוב. ▲ הימור אופטימי, ▼ פסימי.</p>
+      <div id="bold"></div>
+    </section>
+
+    <section class="card" data-needs-people>
+      <h2>🌊 מי הולך עם הזרם</h2>
+      <p class="hint">כמה הטבלה של כל אחד דומה לטבלה המשוקללת של הקבוצה. למעלה — הכי מיינסטרים.</p>
+      <div class="vote-list" id="mainstream"></div>
+      <div class="heat-note" id="mainstream-note"></div>
+    </section>
+
+    <section class="card" data-needs-people>
+      <h2>👯 מי חושב כמוך</h2>
+      <p class="hint">הזוגות שהטבלאות שלהם הכי דומות.</p>
+      <div id="twins"></div>
+      <div class="heat-note" id="twins-note"></div>
     </section>
 
     <section class="card">
