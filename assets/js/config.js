@@ -6,11 +6,14 @@
 const CONFIG = {
 
   /* ---------- 1. חיבור ל-Supabase ----------
-     אחרי שתיצור פרויקט ב-supabase.com:
-     Project Settings ➜ API ➜ העתק את שני הערכים לכאן.
-     המפתח ה-anon נועד להיות פומבי — זה בסדר שהוא בקוד. */
-  SUPABASE_URL:      'https://YOUR-PROJECT-REF.supabase.co',
-  SUPABASE_ANON_KEY: 'YOUR-ANON-KEY',
+     URL:  Project Settings ➜ Data API ➜ "Project URL"
+     KEY:  Project Settings ➜ API Keys ➜ "Publishable key" (מתחיל ב-sb_publishable_)
+           מפתח legacy מסוג anon (מתחיל ב-eyJ) עובד גם הוא.
+
+     ⚠️ לעולם לא את Secret key / service_role — הם עוקפים את כל ההגנות.
+     המפתח הפומבי נועד להיות גלוי בקוד; ההגנה היא ה-RLS שב-setup.sql. */
+  SUPABASE_URL:      'https://ybroktrkezxjdraderia.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_T1Fjr9G47yn7Sc9Tjgltpw_DgX81RMj',
 
   /* ---------- 2. דדליין להגשות ----------
      אחרי התאריך הזה הטופס ננעל ורואים רק סטטיסטיקות.

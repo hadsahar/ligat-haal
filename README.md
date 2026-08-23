@@ -30,18 +30,24 @@
 
 ### 2. חיבור האתר לבסיס הנתונים
 
-ב-Supabase: **Project Settings** (גלגל השיניים) → **API**. תראה שם שני ערכים:
+שני הערכים יושבים בשני מסכים **שונים** תחת **Project Settings**:
 
-| בעמוד | להעתיק אל |
-|---|---|
-| `Project URL` | `SUPABASE_URL` |
-| `anon` `public` key | `SUPABASE_ANON_KEY` |
+| איפה למצוא | מה זה נראה | להעתיק אל |
+|---|---|---|
+| Settings → **Data API** | `Project URL` — `https://xxxx.supabase.co` | `SUPABASE_URL` |
+| Settings → **API Keys** | `Publishable key` — מתחיל ב-`sb_publishable_` | `SUPABASE_ANON_KEY` |
 
 הדבק אותם ב-[`assets/js/config.js`](assets/js/config.js), בשורות הראשונות.
 
-> המפתח `anon` נועד להיות פומבי — זה בסדר גמור שהוא יושב בקוד בגיטהאב.
-> ההגנה האמיתית היא ה-RLS policies שהגדרנו ב-SQL: אפשר רק לקרוא ולהוסיף, ורק עד הדדליין.
-> **אל תשים לעולם את מפתח ה-`service_role`** — הוא עוקף הכל.
+> **על המפתחות:** סופאבייס עוברים ממערכת ישנה לחדשה, ולכן יש שתי לשוניות במסך API Keys.
+> קח את ה-**Publishable key** החדש. מפתח ה-`anon` הישן (מתחיל ב-`eyJ`) עדיין עובד,
+> אבל הוא בדרך להוצאה משימוש עד סוף 2026.
+>
+> שניהם בטוחים לגמרי בקוד פומבי — הם לא עוקפים RLS. ההגנה האמיתית היא
+> ה-policies שהגדרנו ב-`setup.sql`: קריאה והוספה בלבד, ורק עד הדדליין.
+>
+> ⚠️ **לעולם לא** את `Secret key` / `service_role` — הם עוקפים הכל.
+> ואל תלחץ על *Disable JWT-based API keys*.
 
 ### 3. שאר ההגדרות
 

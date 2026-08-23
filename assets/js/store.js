@@ -5,8 +5,19 @@ const Store = (() => {
 
   const TABLE = 'predictions';
 
-  const base = () => `${CONFIG.SUPABASE_URL.replace(/\/+$/, '')}/rest/v1/${TABLE}`;
+  /* מקבל גם URL בסיסי וגם כזה שכולל כבר /rest/v1 — טעות נפוצה בהעתקה. */
+  const base = () => {
+    const root = CONFIG.SUPABASE_URL.trim()
+      .replace(/\/+$/, '')
+      .replace(/\/rest\/v1$/, '');
+    return `${root}/rest/v1/${TABLE}`;
+  };
 
+  /* ⚠️ אל תשנה: שני ההדרים חייבים לשאת את *אותו* ערך בדיוק.
+     מפתחות מהדור החדש (sb_publishable_...) נדחים ב-Authorization: Bearer
+     אלא אם הערך זהה ל-apikey — וזה בדיוק המצב כאן.
+     מפתחות legacy (anon, מתחילים ב-eyJ) עובדים כך ממילא.
+     כלומר הצורה הזו תקפה לשני סוגי המפתחות. */
   const headers = extra => ({
     'apikey':        CONFIG.SUPABASE_ANON_KEY,
     'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
